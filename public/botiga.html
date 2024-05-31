@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Botiga</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            function getProducts(){
+                $.get("dsaApp/storeBBDD/getProducts", function(data, status) {
+                    $("#ProductesBotiga").empty();
+                    data.forEach(function (item) {
+                        var card = $("<div>").addClass("col-md-4");
+                        var cardInner = $("<div>").addClass("card mb-4 shadow-sm");
+                        var img = $("<img>").addClass("card-img-top imagen-redimensionada").attr("src", item.imatge);
+                        var cardBody = $("<div>").addClass("card-body");
+                        var cardTitle = $("<h4>").addClass("card-title").text(item.name);
+                        var cardText = $("<p>").addClass("card-text").html(
+                            "<b>ID: </b>" + item.idProduct + "<br>" +
+                            "<b>Descripció: </b>" + item.description + "<br>" +
+                            "<b>Preu: </b>" + item.price
+                        );
+                        var buyButton = $("<button>").addClass("btn btn-dark").text("Comprar").on("click", function() {
+                            alert("Producte " + item.name + " comprat");
+                        });
+
+                        cardBody.append(cardTitle, cardText, buyButton);
+                        cardInner.append(img, cardBody);
+                        card.append(cardInner);
+                        $("#ProductesBotiga").append(card);
+                    });
+                });
+            }
+            getProducts();
+
+            /*$('#buttonMostrar').click(function() {
+                getProducts();
+            });
+
+            $('#buttonGuardar').click(function () {
+                var productData = {
+                    idProduct: $('#idProduct').val(),
+                    name: $('#nameProduct').val(),
+                    description: $('#descriptionProduct').val(),
+                    price: $('#priceProduct').val(),
+                    imatge: $('#imatgeProduct').val()
+                };
+
+                var URL = "http://localhost:8080/dsaApp/store/addProduct";
+                $.post({
+                    url: URL,
+                    data: JSON.stringify(productData),
+                    contentType: 'application/json; charset=utf-8'
+                })
+                    .done(function (data, status) {
+                        alert("Producte afegit correctament");
+                        getProducts();
+                    })
+                    .fail(function (xhr, err) {
+                        alert("El producte ja existeix");
+                        location.reload();
+                    });
+            });
+
+            $('#buttonDelete').click(function () {
+                var idProduct = $('#idProductDel').val();
+                var URL = "http://localhost:8080/dsaApp/store/deleteProduct/" + idProduct;
+                $.ajax({
+                    type: "DELETE",
+                    url: URL,
+                })
+                    .done(function (data, status) {
+                        alert("Producte esborrat correctament");
+                        getProducts();
+                    })
+                    .fail(function (xhr, err) {
+                        alert("El producte no existeix");
+                        location.reload();
+                    });
+            });
+
+             */
+            $('#home').click(function() {
+                location.href = "/index.html"
+            });
+            $('#miPerfil').click(function() {
+                location.href = "/perfil.html"
+            });
+        });
+    </script>
+
+    <style>
+        body {
+            background-color: #b4e3a2;
+        }
+        .container {
+            text-align: center;
+        }
+        .btn {
+            margin: 20px;
+        }
+        .imagen-redimensionada {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-sm bg-light navbar-light">
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="home">Home</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="#" id="Store">Store</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#"id="miPerfil">Mi Perfil</a>
+        </li>
+    </ul>
+</nav>
+<div class="container p-3 my-3 bg-light text-dark">
+    <div class="">
+        <h1>Store</h1>
+        <div class="row" id="ProductesBotiga"></div>
+    </div>
+
+    <!--<button type="button" class="btn btn-dark" data-toggle="modal" data-target="#myModal">Afegir Producte</button>
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h4 class="modal-title">Afegir Producte</h4>
+                    <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Nom: <input type="text" id="nameProduct"></p>
+                    <p>Id: <input type="text" id="idProduct"></p>
+                    <p>Descripció: <input type="text" id="descriptionProduct"></p>
+                    <p>Preu: <input type="text" id="priceProduct"></p>
+                    <p>Imatge: <input type="text" id="imatgeProduct"></p>
+                    <button id="buttonGuardar" class="btn btn-light" data-dismiss="modal">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#myModalDel">Borrar Producte</button>
+    <div class="modal fade" id="myModalDel">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h4 class="modal-title">Borrar Producte</h4>
+                    <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>ID: <input type="text" id="idProductDel"></p>
+                    <button id="buttonDelete" class="btn btn-light" data-dismiss="modal">Borrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button id="buttonMostrar" type="button" class="btn btn-dark">Llista Producte</button>-->
+</div>
+<div class="col-sm-4"></div>
+<p class="mt-5 mb-3 text-muted text-center">&copy; 2024 Grup 2 DSA</p>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<script>
+    function infoPersonal(name, surname, username, coins){
+        var contenidor =
+            "<p>Nom: "+name+"</p>\n"+
+            "<p>Cognom: "+surname+"</p>\n"+
+            "<p>Nom usuari: "+username+"</p>\n"+
+            "<p>Coins: "+coins+"</p>\n";
+
+        console.log(contenidor);
+        return contenidor;
+    }
+    function botiga(){
+        window.location.href="botiga.html";
+    }
+
+    $(document).ready(function() {
+
+        /*var name = localStorage.getItem('name');
+        var surname = localStorage.getItem('surname');
+        var coins = localStorage.getItem('coins');
+        var id = localStorage.getItem('idUser');
+        var inventario = localStorage.getItem('inventario');
+
+         */
+        var username = localStorage.getItem('username');
+        var password = localStorage.getItem('password');
+
+
+        var URL = "dsaApp/userBBDD/getUser/"+username;
+        $.get({
+            url: URL,
+            data: JSON.stringify(username),
+            contentType: 'application/json; charset=utf-8'
+        })
+            .done(function (data, status) {
+                var name = data.name
+                var surname = data.surname;
+                var username = data.username;
+                var coins = data.coins;
+                var contenidor = infoPersonal(name, surname, username, coins);
+                console.log(contenidor);
+                $("#user-info").append(contenidor);
+
+            })
+            .fail(function (xhr, err) {
+                location.reload();
+            })
+
+
+
+
+
+        /*var url = "dsaApp/userBBDD/getUser/"+username;
+        $.get(url, function (data) {
+            var name = data.name
+            var surname = data.surname;
+            var username = data.username;
+            var coins = data.coins;
+            var contenidor = infoPersonal(name, surname, username, coins);
+            console.log(contenidor);
+            $("#user-info").append(contenidor);
+        });
+
+         */
+
+
+        // Agrega aquí tu código para manejar el formulario de cambio de contraseña
+        $('#btnChangePass').click(function() {
+
+            var userData = {
+                username: username,
+                currentPassword: $('#current-password').val(),
+                newPassword: $('#new-password').val(),
+            }
+
+            var URL = "dsaApp/user/changePassword";
+
+            $.post({
+                url: URL,
+                data: JSON.stringify(userData),
+                contentType: 'application/json; charset=utf-8'
+            })
+                .done(function (data, status) {
+                    alert("Canvi de contrasenya correcte!" );
+                })
+                .fail(function (xhr, err) {
+                    alert("No s'ha pogut canviar de contrasenya :(");
+                    location.reload();
+                })
+        });
+
+        //Butó per redirigir-nos a la botiga
+        $('#buttonStore').click(function() {
+            botiga();
+        });
+
+        $('#home').click(function() {
+            location.href = "/index.html"
+        });
+
+        $('#Store').click(function() {
+            location.href = "/botiga.html"
+        });
+
+    });
+
+</script>
+
+<style>
+    body {
+        background-color: #b4e3a2;
+    }
+
+</style>
+
+
+<body>
+<nav class="navbar navbar-expand-sm bg-light navbar-light">
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="#" id="home">Home</a>
+        </li>
+        <li class="nav-item ">
+            <a class="nav-link" href="#" id="Store">Store</a>
+        </li>
+        <li class="nav-item active">
+            <a class="nav-link" href="#"id="miPerfil">Mi Perfil</a>
+        </li>
+    </ul>
+</nav>
+<div class="jumbotron bg-light">
+    <h3>Dades usuari</h3>
+    <div id="user-info">
+        <!-- Aquí es mostren dades user -->
+    </div>
+
+        <h3>Vols canviar la teva contrasenya?</h3>
+        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#ModalUpdatePassword">Canvia la Contrasenya</button>
+
+        <div class="modal fade" id="ModalUpdatePassword" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Canvi de Contrasenya</h4>
+                        <button type="button" class="close text-danger" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p> Contrasenya Actual: <input type="password" id="current-password"></p>
+                        <p> Nova Contrasenya: <input type="password" id="new-password"></p>
+                        <button id="btnChangePass" type="button" class="btn btn-dark">Guardar Canvis</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <button  id="buttonStore" type="button" class="btn btn-dark" >Botiga</button>
+
+
+</div>
+</body>
+</html>
+<!-- <div class="modal-change-password">
+
+     <p> Contrasenya Actual: <input type="password" id="current-password"></p>
+     <p> Nova Contrasenya: <input type="password" id="new-password"></p>
+     <button type="submit" class="btn btn-dark">Guardar Canvis</button>
+ </div>
+</div>-->
+
